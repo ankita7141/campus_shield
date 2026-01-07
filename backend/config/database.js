@@ -2,10 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/campus_safety', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/campus_safety');
     
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     
@@ -25,12 +22,8 @@ const connectDB = async () => {
   } catch (error) {
     console.error('❌ MongoDB Connection Error:', error.message);
     
-    // Fallback to in-memory database
-    console.log('💾 Using in-memory database as fallback');
-    
-    // You can implement in-memory storage here
-    // For now, we'll continue with mongoose but with a warning
-    process.exit(1);
+    // Optional: fallback to in-memory DB or just stop server
+    process.exit(1); // stops server if DB connection fails
   }
 };
 

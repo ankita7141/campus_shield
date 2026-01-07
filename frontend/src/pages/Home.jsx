@@ -43,28 +43,35 @@ const Home = ({ socket }) => {
     };
   }, [socket]);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // Fetch recent reports
-      const reportsResponse = await api.getReports({ limit: 10 });
-      if (reportsResponse.success) {
-        setReports(reportsResponse.data || []);
-      }
-      
-      // Fetch statistics
-      const statsResponse = await api.getStatistics();
-      if (statsResponse.success) {
-        setStats(statsResponse.data);
-      }
-      
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
+const fetchData = async () => {
+  try {
+    setLoading(true);
+
+    // Fetch recent reports
+    const reportsResponse = await api.reports.getReports({ limit: 10 });
+
+    if (Array.isArray(reportsResponse)) {
+      setReports(reportsResponse);
+    } else if (reportsResponse?.data) {
+      setReports(reportsResponse.data);
     }
-  };
+
+    // Fetch statistics
+    const statsResponse = await api.statistics.getStatistics();
+
+    if (statsResponse?.data) {
+      setStats(statsResponse.data);
+    } else {
+      setStats(statsResponse);
+    }
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const showNotification = (message) => {
     // Create notification element
