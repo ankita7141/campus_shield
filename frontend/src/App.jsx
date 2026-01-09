@@ -11,7 +11,12 @@ import AdminPanel from './pages/AdminPanel';
 
 // Import services
 import api from './services/api';
-import { initFirebase } from './services/firebase';
+import { auth, db, storage } from './services/firebase.js';
+
+
+
+
+
 
 // Initialize services
 api.init();
@@ -34,8 +39,7 @@ function App() {
       api.setToken(token);
     }
 
-    // Initialize Firebase
-    initFirebase();
+
     
     // Setup socket listeners
     socket.on('connect', () => {
