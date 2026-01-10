@@ -20,7 +20,7 @@ import { auth, db, storage } from './services/firebase.js';
 
 // Initialize services
 api.init();
-const socket = io('http://localhost:5000');
+const socket = io(`${import.meta.env.VITE_API_URL.replace('/api','')}`);
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
