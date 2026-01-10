@@ -73,7 +73,8 @@ const ReportForm = ({ socket }) => {
   const getCurrentLocation = async () => {
     try {
       const position = await locationService.getCurrentPosition();
-      const address = await locationService.reverseGeocode(position.lat, position.lng);
+    const address = await locationService.getAddressFromCoords(position.lat, position.lng);
+
       
       setFormData(prev => ({
         ...prev,
