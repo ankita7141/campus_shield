@@ -1,5 +1,11 @@
 const express = require('express');
-const cors = require('cors');
+// Allow local frontend and live frontend
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://campus-shield-1.onrender.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+}));
+
 const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -21,10 +27,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ['http://localhost:5173', 'https://campus-shield-1.onrender.com'],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
   }
 });
+
 
 // Make io accessible to routes
 app.set('io', io);
