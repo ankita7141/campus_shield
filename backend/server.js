@@ -1,11 +1,5 @@
 const express = require('express');
-// Allow local frontend and live frontend
-app.use(cors({
-  origin: ['http://localhost:5173', 'https://campus-shield-1.onrender.com'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  credentials: true
-}));
-
+const cors = require('cors');
 const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -24,50 +18,66 @@ const authRoutes = require('./routes/authRoutes');
 
 // Create Express app
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: ['http://localhost:5173', 'https://campus-shield-1.onrender.com'],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
-  }
-});
 
+// ---------- CORS CONFIG ----------
+app.use(cors({
+  origin: [
+    'http://localhost:5173', // local dev frontend
+    'https://campus-shield-1.onrender.com' // live frontend
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+}));
 
-// Make io accessible to routes
-app.set('io', io);
+// Middleware to parse JSON & URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connect to Database
 connectDB();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// ---------- SOCKET.IO ----------
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: [
+      'http://localhost:5173',
+      'https://campus-shield-1.onrender.com'
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true
+  }
+});
 
-// Socket.io connection
+// Make io accessible to routes
+app.set('io', io);
+
+// Socket.IO events
 io.on('connection', (socket) => {
   console.log('🔌 New client connected:', socket.id);
-  
+
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
   });
-  
+
   socket.on('new-report', (data) => {
     io.emit('report-notification', data);
   });
-  
+
   socket.on('status-update', (data) => {
     io.emit('status-changed', data);
   });
 });
 
-// Routes
+// ---------- ROUTES ----------
 app.use('/api/auth', authRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Basic route
+// Basic API info
 app.get('/', (req, res) => {
   res.json({
     message: '🏫 Campus Safety Platform API',
@@ -98,7 +108,7 @@ app.use((req, res) => {
   });
 });
 
-// Error handler
+// Global Error handler
 app.use((err, req, res, next) => {
   console.error('Server Error:', err);
   res.status(500).json({
@@ -107,15 +117,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
+// ---------- START SERVER ----------
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 http://localhost:${PORT}`);
 });
-
-
-
-
-
-

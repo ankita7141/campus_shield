@@ -26,8 +26,8 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           charts: ['chart.js', 'react-chartjs-2'],
-          maps: ['@react-google-maps/api'],
-          firebase: ['firebase']
+          maps: ['@react-google-maps/api']
+          // ❌ firebase chunk REMOVED
         }
       }
     }
