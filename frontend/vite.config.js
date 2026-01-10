@@ -7,29 +7,19 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://campus-shield-1.onrender.com',
         changeOrigin: true,
-        secure: false
+        secure: true
       },
       '/uploads': {
-        target: 'http://localhost:5000',
+        target: 'https://campus-shield-1.onrender.com',
         changeOrigin: true,
-        secure: false
+        secure: true
       }
     }
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          charts: ['chart.js', 'react-chartjs-2'],
-          maps: ['@react-google-maps/api']
-          // ❌ firebase chunk REMOVED
-        }
-      }
-    }
+    sourcemap: true
   }
 })

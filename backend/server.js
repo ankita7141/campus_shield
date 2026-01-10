@@ -20,11 +20,14 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 
 // ---------- CORS CONFIG ----------
+const allowedOrigins = [
+  'http://localhost:4173', // your current local frontend port
+  'http://localhost:5173', // just in case you switch ports
+  'https://campus-shield-1.onrender.com' // live frontend
+];
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173', // local dev frontend
-    'https://campus-shield-1.onrender.com' // live frontend
-  ],
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
@@ -43,10 +46,7 @@ connectDB();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: [
-      'http://localhost:5173',
-      'https://campus-shield-1.onrender.com'
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true
   }
